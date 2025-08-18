@@ -6,10 +6,6 @@
     <TargetFrameworks>$(SupportedDotnetVersion);$(SupportedFrameworkVersion);$(LatestDotnetVersion);netcoreapp3.1</TargetFrameworks>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\LambdaTale.Execution\LambdaTale.Execution.csproj" />
-  </ItemGroup>
-
     <Choose>
     <When
       Condition="$([MSBuild]::IsTargetFrameworkCompatible($(TargetFramework), $(SupportedDotnetVersion))) or $([MSBuild]::IsTargetFrameworkCompatible($(TargetFramework), $(SupportedFrameworkVersion)))">

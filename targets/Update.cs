@@ -23,7 +23,7 @@ public static partial class Update
         var xUnitVersionRange = nuspec.XPathSelectElement("//dependency[@id=\"xunit.core\"]")!.Attribute("version")!.Value;
         var xUnitVersion = Version.Parse(xUnitVersionRange[1..xUnitVersionRange.IndexOf(',', StringComparison.Ordinal)]).ToString();
         using var httpClient = new HttpClient();
-        foreach (var upstreamSource in Directory.EnumerateFiles(Path.Combine(srcDir, "LambdaTale.Execution", "Upstream"), "*.cs"))
+        foreach (var upstreamSource in Directory.EnumerateFiles(Path.Combine(srcDir, "LambdaTale", "Execution", "Upstream"), "*.cs"))
         {
             var header = await File.ReadLinesAsync(upstreamSource).FirstAsync();
             var newUpstream = VersionedUpstream().Replace(header, match =>
