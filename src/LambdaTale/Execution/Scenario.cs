@@ -1,7 +1,6 @@
 using LambdaTale.Sdk;
-using Xunit;
-using Xunit.Abstractions;
 using Xunit.Sdk;
+using Xunit.v3;
 
 namespace LambdaTale.Execution;
 

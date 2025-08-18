@@ -1,5 +1,5 @@
 using System;
-using Xunit.Sdk;
+using Xunit.v3;
 
 namespace LambdaTale;
 

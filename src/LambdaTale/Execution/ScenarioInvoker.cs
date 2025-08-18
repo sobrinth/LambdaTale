@@ -7,8 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using LambdaTale.Execution.Extensions;
 using LambdaTale.Sdk;
-using Xunit.Abstractions;
+using Xunit;
 using Xunit.Sdk;
+using Xunit.v3;
 
 namespace LambdaTale.Execution;
 

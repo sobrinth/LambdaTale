@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Globalization;
-using Xunit.Abstractions;
+using Xunit;
 using Xunit.Sdk;
+using Xunit.v3;
 
 namespace LambdaTale.Execution;
 

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Xunit.Sdk;
+using Xunit.v3;
 
 namespace LambdaTale;
 

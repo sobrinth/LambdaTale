@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
-using Xunit.Abstractions;
 using Xunit.Sdk;
+using Xunit.v3;
 
 namespace LambdaTale.Execution.Extensions;
 

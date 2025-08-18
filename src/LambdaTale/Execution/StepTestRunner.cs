@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using LambdaTale.Sdk;
-using Xunit.Sdk;
+using Xunit.v3;
 
 namespace LambdaTale.Execution;
 
