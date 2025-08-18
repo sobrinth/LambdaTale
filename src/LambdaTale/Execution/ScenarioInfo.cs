@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.InteropServices.ComTypes;
 using Xunit.Sdk;
 
 namespace LambdaTale.Execution;
 
 public class ScenarioInfo
 {
-    private static readonly ITypeInfo objectType = Reflector.Wrap(typeof(object));
+    private static readonly Type objectType = typeof(object);
 
     public string ScenarioDisplayName { get; }
 
@@ -18,30 +17,30 @@ public class ScenarioInfo
 
     public IReadOnlyCollection<object> ConvertedDataRow { get; }
 
-    public ScenarioInfo(IMethodInfo testMethod, object[] dataRow, string scenarioOutlineDisplayName)
+    public ScenarioInfo(MethodInfo testMethod, object[] dataRow, string scenarioOutlineDisplayName)
     {
         testMethod = testMethod ?? throw new ArgumentNullException(nameof(testMethod));
 
         var parameters = testMethod.GetParameters().ToList();
         var typeParameters = testMethod.GetGenericArguments().ToList();
 
-        ITypeInfo[] typeArguments;
+        Type[] typeArguments;
         if (testMethod.IsGenericMethodDefinition)
         {
             typeArguments = typeParameters
                 .Select(typeParameter => InferTypeArgument(typeParameter.Name, parameters, dataRow))
                 .ToArray();
 
-            this.MethodToRun = testMethod.MakeGenericMethod(typeArguments).ToRuntimeMethod();
+            this.MethodToRun = testMethod.MakeGenericMethod(typeArguments);
         }
         else
         {
             typeArguments = [];
-            this.MethodToRun = testMethod.ToRuntimeMethod();
+            this.MethodToRun = testMethod;
         }
 
         var parameterInfos = this.MethodToRun.GetParameters();
-        var passedArguments = Reflector.ConvertArguments(dataRow, parameterInfos.Select(p => p.ParameterType).ToArray());
+        object[] passedArguments = []; // TODO: changes to DataDiscoverer //Reflector.ConvertArguments(dataRow, parameterInfos.Select(p => p.ParameterType).ToArray());
 
         var generatedArguments = GetGeneratedArguments(
             typeParameters, typeArguments, parameters, parameterInfos, passedArguments.Length);
@@ -55,11 +54,11 @@ public class ScenarioInfo
         this.ConvertedDataRow = arguments.Select(argument => argument.Value).ToList();
     }
 
-    private static ITypeInfo InferTypeArgument(
-        string typeParameterName, List<IParameterInfo> parameters, object[] passedArguments)
+    private static Type InferTypeArgument(
+        string typeParameterName, List<ParameterInfo> parameters, object[] passedArguments)
     {
         var sawNullValue = false;
-        ITypeInfo typeArgument = null;
+        Type typeArgument = null;
         for (var index = 0; index < Math.Min(parameters.Count, passedArguments.Length); ++index)
         {
             var parameterType = parameters[index].ParameterType;
@@ -72,7 +71,7 @@ public class ScenarioInfo
                 }
                 else if (typeArgument == null)
                 {
-                    typeArgument = Reflector.Wrap(passedArgument.GetType());
+                    typeArgument = passedArgument.GetType();
                 }
                 else if (typeArgument.Name != passedArgument.GetType().FullName)
                 {
@@ -85,9 +84,9 @@ public class ScenarioInfo
     }
 
     private static IEnumerable<Argument> GetGeneratedArguments(
-        List<ITypeInfo> typeParameters,
-        ITypeInfo[] typeArguments,
-        List<IParameterInfo> parameters,
+        List<Type> typeParameters,
+        Type[] typeArguments,
+        List<ParameterInfo> parameters,
         ParameterInfo[] parameterInfos,
         int passedArgumentsCount)
     {
@@ -105,7 +104,7 @@ public class ScenarioInfo
             var parameterType = parameters[missingArgumentIndex].ParameterType;
             if (parameterType.IsGenericParameter)
             {
-                ITypeInfo concreteType = null;
+                Type concreteType = null;
                 for (var typeParameterIndex = 0; typeParameterIndex < typeParameters.Count; ++typeParameterIndex)
                 {
                     var typeParameter = typeParameters[typeParameterIndex];
@@ -121,18 +120,18 @@ public class ScenarioInfo
                                     $"The type of parameter \"{parameters[missingArgumentIndex].Name}\" cannot be resolved.");
             }
 
-            yield return new Argument(((IReflectionTypeInfo)parameterType).Type);
+            yield return new Argument(parameterType);
         }
     }
 
     private static string GetScenarioDisplayName(
         string scenarioOutlineDisplayName,
-        IReadOnlyList<ITypeInfo> typeArguments,
-        List<IParameterInfo> parameters,
+        IReadOnlyList<Type> typeArguments,
+        List<ParameterInfo> parameters,
         IReadOnlyList<Argument> arguments)
     {
         var typeArgumentsString = typeArguments.Any()
-            ? $"<{string.Join(", ", typeArguments.Select(TypeUtility.ConvertToSimpleTypeName))}>"
+            ? $"<{string.Join(", ", typeArguments.Select(x => x.ToSimpleName()))}>"
             : string.Empty;
 
         var parameterAndArgumentTokens = new List<string>();

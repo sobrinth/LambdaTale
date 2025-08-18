@@ -10,10 +10,10 @@ namespace LambdaTale;
 /// If the data source contains multiple rows,
 /// then the scenario method is executed multiple times (once with each data row).
 /// Examples can be fed to the scenario by applying one or more instances of <see cref="ExampleAttribute"/>
-/// or any other attribute inheriting from <see cref="Xunit.Sdk.DataAttribute"/>.
+/// or any other attribute inheriting from <see cref="DataAttribute"/>.
 /// E.g. <see cref="Xunit.InlineDataAttribute"/> or
 /// <see cref="Xunit.MemberDataAttribute"/>.
 /// </summary>
-[XunitTestCaseDiscoverer("LambdaTale.Execution.ScenarioDiscoverer", "bbv.LambdaTale.Execution")]
+[XunitTestCaseDiscoverer(typeof(Execution.ScenarioDiscoverer))]
 [AttributeUsage(AttributeTargets.Method)]
 public class ScenarioAttribute : FactAttribute;

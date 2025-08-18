@@ -21,6 +21,10 @@ public class TestOutputHelper(IMessageBus messageBus) : ITestOutputHelper
         }
     }
 
+    public void Write(string message) => throw new NotImplementedException();
+
+    public void Write(string format, params object[] args) => throw new NotImplementedException();
+
     public void WriteLine(string message)
     {
         if (this.test is { } t)
@@ -35,6 +39,8 @@ public class TestOutputHelper(IMessageBus messageBus) : ITestOutputHelper
 
     public void WriteLine(string format, params object[] args) =>
         this.WriteLine(string.Format(CultureInfo.InvariantCulture, format, args));
+
+    public string Output { get; }
 
     private void Queue(ITest t, string message) =>
         messageBus.QueueMessage(new TestOutput(t, message + Environment.NewLine));

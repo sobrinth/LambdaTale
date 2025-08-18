@@ -4,7 +4,7 @@ using Xunit.v3;
 
 namespace LambdaTale.Execution;
 
-public class Scenario : LongLivedMarshalByRefObject, IScenario
+public class Scenario : IScenario
 {
     public Scenario(IXunitTestCase scenarioOutline, string displayName)
     {

@@ -30,7 +30,7 @@ public class ScenarioOutlineTestCase : XunitTestCase
         await new ScenarioOutlineTestCaseRunner(
                 diagnosticMessageSink,
                 this,
-                this.DisplayName,
+                this.TestCaseDisplayName,
                 this.SkipReason,
                 constructorArguments,
                 messageBus,

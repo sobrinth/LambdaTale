@@ -14,7 +14,6 @@ namespace LambdaTale;
 /// <see cref="Xunit.MemberDataAttribute"/>.
 /// </summary>
 /// /// <param name="data">The data values to pass to the scenario.</param>
-[DataDiscoverer("Xunit.Sdk.InlineDataDiscoverer", "xunit.core")]
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public sealed class ExampleAttribute(params object[] data) : DataAttribute
 {
