@@ -7,10 +7,17 @@ public class ScenarioTests
     [Fact]
     public void ShouldFail() => Assert.True(false);
 
+    [Fact]
+    public void ShouldPass() => Assert.True(true);
+
 
     [Scenario]
-    public void Scenario()
+    public void Scenario(int x)
     {
-        Assert.False(true);
+        "Given a Tale setting a initial value of 1".x(() => x = 1);
+
+        "When a Tale is incrementing the value is executed".x(() => x += 1);
+
+        "Then the value has changed".x(() => Assert.Equal(2, x));
     }
 }

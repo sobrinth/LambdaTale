@@ -1,3 +1,4 @@
+using System.Reflection;
 using Xunit.v3;
 
 namespace LambdaTale.v3;
@@ -39,11 +40,14 @@ public class ScenarioTestCase : XunitTestCase
 
     public override ValueTask<IReadOnlyCollection<IXunitTest>> CreateTests()
     {
+        /*
+         * We currently have a problem when trying to create testmethods based on all the steps...
+         * One really "brute-forcy" way is to "translate" the steps to private methods with a roslyn generator and tag
+         * them with a "special" attribute?
+         *
+         */
+
         var result = new List<IXunitTest>();
-
-        var testMethod = this.TestMethod;
-
-
 
         return new(result);
     }
