@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using Xunit;
 using Xunit.v3;
 
@@ -16,4 +17,14 @@ namespace LambdaTale;
 /// </summary>
 [XunitTestCaseDiscoverer(typeof(Execution.ScenarioDiscoverer))]
 [AttributeUsage(AttributeTargets.Method)]
-public class ScenarioAttribute : FactAttribute;
+public class ScenarioAttribute(
+    [CallerFilePath] string? sourceFilePath = null,
+    [CallerLineNumber] int sourceLineNumber = -1) :
+    FactAttribute(sourceFilePath, sourceLineNumber), IScenarioAttribute
+{
+    /// <inheritdoc/>
+    public bool DisableDiscoveryEnumeration { get; }
+
+    /// <inheritdoc/>
+    public bool SkipTestWithoutData { get; }
+}
