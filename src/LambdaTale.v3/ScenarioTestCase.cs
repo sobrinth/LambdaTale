@@ -1,0 +1,50 @@
+using Xunit.v3;
+
+namespace LambdaTale.v3;
+
+public class ScenarioTestCase : XunitTestCase
+{
+    public ScenarioTestCase(
+        IXunitTestMethod testMethod,
+        string testCaseDisplayName,
+        string uniqueId,
+        bool @explicit,
+        Type[]? skipExceptions = null,
+        string? skipReason = null,
+        Type? skipType = null,
+        string? skipUnless = null,
+        string? skipWhen = null,
+        Dictionary<string, HashSet<string>>? traits = null,
+        string? sourceFilePath = null,
+        int? sourceLineNumber = null,
+        int? timeout = null) :
+        base(
+            testMethod,
+            testCaseDisplayName,
+            uniqueId,
+            @explicit,
+            skipExceptions,
+            skipReason,
+            skipType,
+            skipUnless,
+            skipWhen,
+            traits,
+            testMethodArguments: null,
+            sourceFilePath,
+            sourceLineNumber,
+            timeout
+        )
+    {
+    }
+
+    public override ValueTask<IReadOnlyCollection<IXunitTest>> CreateTests()
+    {
+        var result = new List<IXunitTest>();
+
+        var testMethod = this.TestMethod;
+
+
+
+        return new(result);
+    }
+}
