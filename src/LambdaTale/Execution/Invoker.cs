@@ -8,7 +8,7 @@ namespace LambdaTale.Execution;
 
 public static class Invoker
 {
-    public static async Task Invoke(this Func<Task> action, ExceptionAggregator aggregator, ExecutionTimer timer)
+    public static async Task Invoke(this Func<Task> action, ExceptionAggregator aggregator)
     {
         var oldSyncContext = SynchronizationContext.Current;
         try

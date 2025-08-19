@@ -113,13 +113,13 @@ public class ScenarioOutlineTestCaseRunner(
         // Run the cleanup here so we can include cleanup time in the run summary,
         // but save any exceptions so we can surface them during the cleanup phase,
         // so they get properly reported as test case cleanup failures.
-        var timer = new ExecutionTimer();
+        var elapsedTime = TimeSpan.Zero;
         foreach (var disposable in this.disposables)
         {
-            timer.Aggregate(() => this.cleanupAggregator.Run(() => disposable.Dispose()));
+            elapsedTime += ExecutionTimer.Measure(() => this.cleanupAggregator.Run(() => disposable.Dispose()));
         }
 
-        summary.Time += timer.Total;
+        summary.Time += elapsedTime.Seconds;
         return summary;
     }
 

@@ -25,7 +25,6 @@ public class ScenarioInvoker
     private readonly IReadOnlyList<BeforeAfterTestAttribute> beforeAfterScenarioAttributes;
     private readonly ExceptionAggregator aggregator;
     private readonly CancellationTokenSource cancellationTokenSource;
-    private readonly ExecutionTimer timer = new();
     private readonly Stack<BeforeAfterTestAttribute> beforeAfterScenarioAttributesRun = new();
 
     public ScenarioInvoker(
@@ -54,6 +53,7 @@ public class ScenarioInvoker
     public async Task<RunSummary> RunAsync()
     {
         var summary = new RunSummary();
+        var elapsedTime = TimeSpan.Zero;
         await this.aggregator.RunAsync(async () =>
         {
             if (!this.cancellationTokenSource.IsCancellationRequested)
@@ -74,11 +74,11 @@ public class ScenarioInvoker
 
                 if (testClassInstance is IDisposable disposable)
                 {
-                    this.timer.Aggregate(() => this.aggregator.Run(disposable.Dispose));
+                    elapsedTime += ExecutionTimer.Measure(() => this.aggregator.Run(disposable.Dispose));
                 }
             }
 
-            summary.Time += this.timer.Total;
+            summary.Time += elapsedTime.Seconds;
         });
 
         return summary;
@@ -248,14 +248,15 @@ public class ScenarioInvoker
         if (scenarioTeardowns.Count != 0)
         {
             scenarioTeardowns.Reverse();
-            var teardownTimer = new ExecutionTimer();
+            var teardownElapsedTime = TimeSpan.Zero;
             var teardownAggregator = new ExceptionAggregator();
             foreach (var teardown in scenarioTeardowns)
             {
-                await Invoker.Invoke(() => teardown.Item2(teardown.Item1), teardownAggregator, teardownTimer);
+                teardownElapsedTime += await ExecutionTimer.MeasureAsync(async () =>
+                    await Invoker.Invoke(() => teardown.Item2(teardown.Item1), teardownAggregator));
             }
 
-            summary.Time += teardownTimer.Total;
+            summary.Time += teardownElapsedTime.Seconds;
 
             if (teardownAggregator.HasExceptions)
             {

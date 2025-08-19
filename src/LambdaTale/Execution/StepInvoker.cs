@@ -12,7 +12,6 @@ public class StepInvoker
     private readonly Func<IStepContext, Task> body;
     private readonly ExceptionAggregator aggregator;
     private readonly CancellationTokenSource cancellationTokenSource;
-    private readonly ExecutionTimer timer = new();
 
     public StepInvoker(
         IStepContext stepContext,
@@ -26,19 +25,22 @@ public class StepInvoker
         this.cancellationTokenSource = cancellationTokenSource ?? throw new ArgumentNullException(nameof(cancellationTokenSource));
     }
 
-    public async Task<decimal> RunAsync()
+    public async Task<TimeSpan> RunAsync()
     {
+        var elapsedTime = TimeSpan.Zero;
         if (this.body != null)
         {
             await this.aggregator.RunAsync(async () =>
             {
                 if (!this.cancellationTokenSource.IsCancellationRequested && !this.aggregator.HasExceptions)
                 {
-                    await Invoker.Invoke(() => this.body(this.stepContext), this.aggregator, this.timer);
+                    elapsedTime += await ExecutionTimer.MeasureAsync(async () =>
+                        await Invoker.Invoke(() => this.body(this.stepContext), this.aggregator)
+                    );
                 }
             });
         }
 
-        return this.timer.Total;
+        return elapsedTime;
     }
 }
