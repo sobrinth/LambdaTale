@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
+using Xunit;
+using Xunit.Sdk;
 using Xunit.v3;
 
 namespace LambdaTale;
@@ -15,8 +18,34 @@ namespace LambdaTale;
 /// </summary>
 /// /// <param name="data">The data values to pass to the scenario.</param>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-public sealed class ExampleAttribute(params object[] data) : DataAttribute
+public sealed class ExampleAttribute(params object?[]? data) : DataAttribute
 {
+    /// <summary>
+    /// Gets the data to be passed to the test.
+    /// </summary>
+    // If the user passes null to the constructor, we assume what they meant was a
+    // single null value to be passed to the test.
+    public object?[] Data { get; } = data ?? [null];
+
     /// <inheritdoc/>
-    public override IEnumerable<object[]> GetData(MethodInfo testMethod) => [data];
+    public override ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
+    {
+        var traits = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+        TestIntrospectionHelper.MergeTraitsInto(traits, this.Traits);
+
+        return new([
+            new TheoryDataRow(this.Data)
+            {
+                Explicit = this.ExplicitAsNullable,
+                Label = this.Label,
+                Skip = this.Skip,
+                TestDisplayName = this.TestDisplayName,
+                Timeout = this.TimeoutAsNullable,
+                Traits = traits
+            }
+        ]);
+    }
+
+    /// <inheritdoc/>
+    public override bool SupportsDiscoveryEnumeration() => true;
 }
