@@ -4,6 +4,8 @@
     <File Path="Directory.Build.props" />
     <File Path="global.json" />
   </Folder>
+  <Project Path="LambdaTale.v3.Generator\LambdaTale.v3.Generator.Tests\LambdaTale.v3.Generator.Tests.csproj" Type="Classic C#" />
+  <Project Path="LambdaTale.v3.Generator\LambdaTale.v3.Generator\LambdaTale.v3.Generator.csproj" Type="Classic C#" />
   <Project Path="LambdaTale.v3.Tests\LambdaTale.v3.Tests.csproj" Type="Classic C#" />
   <Project Path="LambdaTale.v3\LambdaTale.v3.csproj" Type="Classic C#" />
 </Solution>
