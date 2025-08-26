@@ -11,7 +11,7 @@ public interface IScenario : ITest
     /// <summary>
     /// Gets the display name of the scenario.
     /// </summary>
-    new string DisplayName { get; }
+    new string TestDisplayName { get; }
 
     /// <summary>
     /// Gets the scenario outline this scenario belongs to.

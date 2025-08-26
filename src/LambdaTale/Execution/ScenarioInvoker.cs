@@ -198,7 +198,7 @@ public class ScenarioInvoker
             stepDefinition.SkipReason ??= skipReason;
 
             var stepDisplayName = GetStepDisplayName(
-                this.scenario.DisplayName,
+                this.scenario.TestDisplayName,
                 ++stepNumber,
                 stepDefinition.DisplayTextFunc?.Invoke(stepDefinition.Text, stepNumber <= backgroundStepDefinitions.Count));
 
@@ -211,7 +211,7 @@ public class ScenarioInvoker
                 {
                     if (message is ITestFailed && stepDefinition.FailureBehavior == RemainingSteps.Skip)
                     {
-                        skipReason = $"Failed to execute preceding step: {step.DisplayName}";
+                        skipReason = $"Failed to execute preceding step: {step.TestDisplayName}";
                     }
                 });
             var stepContext = new StepContext(step);
@@ -263,7 +263,7 @@ public class ScenarioInvoker
                 summary.Failed++;
                 summary.Total++;
 
-                var stepDisplayName = GetStepDisplayName(this.scenario.DisplayName, ++stepNumber, "(Teardown)");
+                var stepDisplayName = GetStepDisplayName(this.scenario.TestDisplayName, ++stepNumber, "(Teardown)");
 
                 this.messageBus.Queue(
                     new StepTest(this.scenario, stepDisplayName),
