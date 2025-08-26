@@ -2,8 +2,7 @@ namespace LambdaTale.v3;
 
 public static class StringExtensions
 {
-    public static IStep x(this string text, Action body)
-    {
-        return null;
-    }
+    public static void x(this string tale, Action lambda) => Scenario.Add(new ScenarioStepDefinition(tale, lambda));
 }
+
+public record ScenarioStepDefinition(string Tale, Action Lambda);
